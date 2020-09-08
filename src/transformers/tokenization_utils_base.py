@@ -1892,40 +1892,47 @@ class PreTrainedTokenizerBase(SpecialTokensMixin):
                 :obj:`is_pretokenized=True` (to lift the ambiguity with a batch of sequences).
         """
         # Input type checking for clearer error
-        assert isinstance(text, str) or (
-            isinstance(text, (list, tuple))
-            and (
-                len(text) == 0
-                or (
-                    isinstance(text[0], str)
-                    or (isinstance(text[0], (list, tuple)) and (len(text[0]) == 0 or isinstance(text[0][0], str)))
+        if not (
+            isinstance(text, str)
+            or (
+                isinstance(text, (list, tuple))
+                and (
+                    len(text) == 0
+                    or (
+                        isinstance(text[0], str)
+                        or (isinstance(text[0], (list, tuple)) and (len(text[0]) == 0 or isinstance(text[0][0], str)))
+                    )
                 )
             )
-        ), (
-            "text input must of type `str` (single example), `List[str]` (batch or single pretokenized example) "
-            "or `List[List[str]]` (batch of pretokenized examples)."
-        )
+        ):
+            raise TypeError(
+                "text input must of type `str` (single example), `List[str]` (batch or single pretokenized example) "
+                "or `List[List[str]]` (batch of pretokenized examples)."
+            )
 
-        assert (
-            text_pair is None
-            or isinstance(text_pair, str)
-            or (
-                isinstance(text_pair, (list, tuple))
-                and (
-                    len(text_pair) == 0
-                    or (
-                        isinstance(text_pair[0], str)
+        if not (
+                (
+                text_pair is None
+                or isinstance(text_pair, str)
+                or (
+                    isinstance(text_pair, (list, tuple))
+                    and (
+                        len(text_pair) == 0
                         or (
-                            isinstance(text_pair[0], (list, tuple))
-                            and (len(text_pair[0]) == 0 or isinstance(text_pair[0][0], str))
+                            isinstance(text_pair[0], str)
+                            or (
+                                isinstance(text_pair[0], (list, tuple))
+                                and (len(text_pair[0]) == 0 or isinstance(text_pair[0][0], str))
+                            )
                         )
                     )
                 )
             )
-        ), (
-            "text_pair input must of type `str` (single example), `List[str]` (batch or single pretokenized example) "
-            "or `List[List[str]]` (batch of pretokenized examples)."
-        )
+        ):
+            raise TypeError(
+                "text_pair input must of type `str` (single example), `List[str]` (batch or single pretokenized example) "
+                "or `List[List[str]]` (batch of pretokenized examples)."
+            )
 
         is_batched = bool(
             (not is_pretokenized and isinstance(text, (list, tuple)))
